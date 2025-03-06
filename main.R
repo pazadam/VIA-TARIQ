@@ -28,7 +28,7 @@ cs_250 <- leastcostpath::create_cs(x = cost, neighbours = 16, dem = NULL, max_sl
 fete_random <- list()
 random_points <- list()
 
-#MODELLING FETE LCPS
+#MODELLING FETE LCPS USING ISOTROPIC CONDUCTANCE SURFACE
 #IN EACH RUN A SET OF 100 RANDOM POINTS WITHIN A BOUNDING BOX (EQUAL TO THE EXTENT OF THE UNDERLYING CONDUCTANCE SURFACE) ARE GENERATED
 #LCPS ARE THEN CALCULATED FROM ALL POINTS TO ALL OTHER POINTS (FETE=FROM EVERYWHERE TO EVERYWHERE)#
 #POINTS AND LCPS ARE THEN EXPORTED AS SHAPEFILES TO USE IN THE GIS FOR ADDITIONAL ANALYSES
@@ -48,6 +48,8 @@ cs_70 <- terra::rast("data/south_conductance_70.tif")
 source_points <- sf::st_read("data/south_source_points.shp")
 south_sites <- sf::st_read("data/south_sites.shp")
 
+##SCENARIO 2.1 MODELLING FETE LCPS USING ISOTROPIC CONDUCTANCE SURFACE
+
 #CREATE ISOTROPIC CONDUCTIVITY SURFACE
 cs <- leastcostpath::create_cs(x=cs_70, neighbours = 16, dem = NULL, max_slope = NULL)
 
@@ -59,7 +61,7 @@ sf::st_write(south_fete, "outputs/south_fete.shp")
 south_roman <- leastcostpath::create_FETE_lcps(x=cs, locations = south_sites, cost_distance = FALSE, ncores = 1)
 sf::st_write(south_roman, "outputs/south_roman.shp")
 
-##MODELLING FETE LCPS USING DIFFERENT COST FUNCTIONS
+##SCENARIO 2.2 MODELLING FETE LCPS USING DIFFERENT COST FUNCTIONS
 
 #DEFINE COST FUNCTIONS
 cost_functions <- c("tobler", "naismith", "herzog", "llobera-sluckin") #TOBLER AND NAISMITH FUNCTIONS ARE TIME-SAVING ALGORITHMS, HERZOG AND LLOBERA-SLUCKIN ARE ENERGY-SAVING FUNCTIONS
@@ -92,7 +94,7 @@ for (i in 1:length(cost_functions)) {
   
 }
 
-##COMPARING FETE LCPS (ISOTROPIC MODEL WITH DEFINED COST FUNCTIONS), REGULAR GRID OF POINTS#
+##COMPARING FETE LCPS (ISOTROPIC MODEL WITH SLOPE-BASED COST FUNCTIONS), REGULAR GRID OF POINTS
 
 #SEPARATE FETE LCPS ACCORDING TO THE SLOPE FUNCTION USED
 tobler <- slope_fete[[1]]
