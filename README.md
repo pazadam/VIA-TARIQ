@@ -18,7 +18,7 @@ The code in ***main.R*** is titled "**Modelling natural corridors of movement in
 
 1.  *Modelling natural corridors of movement*
 
-The first scenario focuses on modelling 'natural corridors of movement', i.e. areas where movement is more likely to occur based on a set of given criteria. Approach implemented here is an adaptation of the 'from everywhere to everywhere' (FETE) method (White and Barber 2012, Crabtree et al 2016). While in the original implementation all raster cells are considered as source points, here, due to limitations on computing power and time, only 100 random source points are generated in each simulation. With 50 simulations this results in 5,000 source points and 495,000 least-cost paths (LCPs) generated in the study region. This model uses a conductance surface representing topographic variables and their friction values (3 categories of slope, topographic position index - TPI, Vector Ruggedness Measure Local - VRML). The conductance surface (CS) is direction-independent, and therefore it is called 'isotropic' throughout the code. The LCPs are exported as shapefiles and further analysis is done in GIS to explore their relationship with known Roman roads.
+The first scenario focuses on modelling 'natural corridors of movement', i.e. areas where movement is more likely to occur based on a set of given criteria. Approach implemented here is an adaptation of the 'from everywhere to everywhere' (FETE) method (White and Barber 2012, Crabtree et al 2021). While in the original implementation all raster cells are considered as source points, here, due to limitations on computing power and time, only 100 random source points are generated in each simulation. With 50 simulations this results in 5,000 source points and 495,000 least-cost paths (LCPs) generated in the study region. This model uses a conductance surface representing topographic variables and their friction values (3 categories of slope, topographic position index - TPI, Vector Ruggedness Measure Local - VRML). The conductance surface (CS) is direction-independent, and therefore it is called 'isotropic' throughout the code. The LCPs are exported as shapefiles and further analysis is done in GIS to explore their relationship with known Roman roads.
 
 2.  *Modelling FETE LCPs in the Southern Levant and comparing various cost functions*
 
@@ -93,6 +93,28 @@ A plot showing normalised PDI values comparing 60 selected Roman roads with the 
 ### **Note on the usage**
 
 Since source points in the scenario 1 are generated randomly in each simulation run, the resulting LCPs will differ every time the script is ran. The assumptions is that the number of calculated LCPs is high enough to reveal statistically more probable places that channel movement in the landscape (natural corridors of movement) with only minor deviations. The full evaluation and analysis of the material is provided in the article —-, and full dataset is published at Zenodo repository.
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+### Bibliography
+
+Crabtree, S. et al. 2016. Landscape rules predict optimal superhighways for the first peopling of Sahul. *Nature Human Behaviour* 5, 1303-1313. DOI: [10.1038/s41562-021-01106-8](https://doi.org/10.1038/s41562-021-01106-8)
+
+Hanson, J.W. 2016. *Cities Database (OXREP database)*. Version 1.0. Accessed 1/12/2024: http://oxrep.classics.ox.ac.uk/databases/cities/. DOI: <https://doi.org/10.5287/bodleian:eqapevAn8>
+
+Hawker, L. et al. 2022. A 30 m global map of elevation with forests and buildings removed. *Environmental Research Letters* 17. DOI: [10.1088/1748-9326/ac4d4f](https://doi.org/10.1088/1748-9326/ac4d4f)
+
+Herzog, I. 2013. "The Potential and Limits of Optimal Path Analysis," in Bevan, A. and M. Lake (eds.) *Computational Approaches to Archaeological Spaces*. Institute of Archaeology, University College London. London, 179-211.
+
+Llobera, M. and Sluckin, T.J. 2007. "Zigzagging: Theoretical Insights on Climbing Strategies," *Journal of Theoretical Biology* 249, 206-217.
+
+Naismith, W. 1892. Excursions: Cruach Ardran, Stobinian, and Ben More, *Scottish Mountaineering Club Journal* 2, 136.
+
+Tobler, W. 1993. Three Presentations on Geographical Analysis and Modelling. *Technical Report* 93-1. Santa Barbara, CA.
+
+White, D.A. and Barber, S.B. 2012. Geospatial modeling of pedestrian transportation networks: a case study from precolumbian Oaxaca, Mexico. *Journal of Archaeological Science* 39:8, 2684-2696. DOI: [10.1016/j.jas.2012.04.017](https://doi.org/10.1016/j.jas.2012.04.017)
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
 Shield: [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by/4.0/)
 
