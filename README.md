@@ -28,7 +28,7 @@ The second scenario focuses on Southern Levant, essentially asking question if t
 
 ### Data
 
-The '*data*' folder contains the following input data for the code:
+The ***data*** folder contains the following input data for the code:
 
 -   **b_box.shp**
 
@@ -36,10 +36,10 @@ Bounding box for the generation of the random points in the scenario 1. It outli
 
 -   **levant_conductance_250.tif**
 
-Raster representing conductivity values in the landscape with resolution of 250 m. It is based on 30 m resolution slope (4 categories), TPI, and VRML rasters, which are in themselves based on the FABDEM (Hawker et al 2022, <font color="red">see Zenodo for the full description of the source raster layers)</font>. These raster layers were mosaiced into one with only the lowest value in given cell location retained. The original 30 m resolution conductivity raster was resampled to 250 m resolution using 'Majority' function in 'Resample' tool in ArcGIS Pro v3 (in order to limit computational demands). The values in the raster represent conductivity of different terrain types (low values represent low conductivity):
+Raster representing conductivity values in the landscape with resolution of 250 m. It is based on 30 m resolution slope (4 categories), TPI, and VRML rasters, which are in themselves based on the FABDEM (Hawker et al 2022, <font color="red">see Zenodo repository for the full dataset and description of the source raster layers)</font>. These raster layers were mosaiced into one with only the lowest value in given cell location retained. The original 30 m resolution conductivity raster was resampled to 250 m resolution using 'Majority' function in 'Resample' tool in ArcGIS Pro v3 (in order to limit computational demands). The values in the raster represent conductivity of different terrain types (low values represent low conductivity):
 
 |  |  |
-|----------------------|-------------------|
+|----|----|
 | **Terrain type** | **Conductivity values** |
 | Slope \<5° | 100 |
 | Slope 5-10° | 50 |
@@ -47,12 +47,12 @@ Raster representing conductivity values in the landscape with resolution of 250 
 | Slope \>20° | 10 |
 | VRML \>0.002332516 | 5 |
 | TPI (\>-80.709 \<91.175) | 2 |
-| Marshlands
-(Amuq, al-Ghab, Jabboul, ar-Ruj, Biqqa, Hule) | 2 |
-| Lakes
-(Gavur Gölü, Amuq, ar-Ruj, Homs Lake, Hule, Dead Sea) | 0 |
+| Marshlands |  |
+| (Amuq, al-Ghab, Jabboul, ar-Ruj, Biqqa, Hule) | 2 |
+| Lakes |  |
+| (Gavur Gölü, Amuq, ar-Ruj, Homs Lake, Hule, Dead Sea) | 0 |
 
--    **south_case_roads.shp**
+-   **south_case_roads.shp**
 
 Layer of 60 selected Roman roads in the Southern Levant used for comparison with calculated LCPs in the scenario 2. THe roads are coming from the *Itiner-e* dataset (Brughmans et al 2024).
 
@@ -73,6 +73,26 @@ Layer of 43 selected Roman sites used for calculating LCPs in the scenario 2. Th
 Layer of of source points used to calculate FETE LCPs in scenario 2. They are arranged in a regular orthogonal grid with a spacing of 30 km over continuouss landmass, except for large water bodies.
 
 All data is in projected coordinated system **EPSG:3395 (World Mercator)**.
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+### Output
+
+Due to storage limitations, only two output files are included in the repository (folder ***output***), as the FETE LCPs have total size of several GB. For the full dataset see Zenodo repository.
+
+-   **n_pdi_comparison.tiff**
+
+A plot showing normalised PDI values comparing isotropic model with each of the four selected slope-based algorithms. X sign shows mean NPDI value.
+
+-   **n_pdi_roman_roads.tiff**
+
+A plot showing normalised PDI values comparing 60 selected Roman roads with the isotropic model and four selected slope-based algorithms. X sign shows mean NPDI value.
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+### **Note on the usage**
+
+Since source points in the scenario 1 are generated randomly in each simulation run, the resulting LCPs will differ every time the script is ran. The assumptions is that the number of calculated LCPs is high enough to reveal statistically more probable places that channel movement in the landscape (natural corridors of movement) with only minor deviations. The full evaluation and analysis of the material is provided in the article —-, and full dataset is published at Zenodo repository.
 
 Shield: [![CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by/4.0/)
 
