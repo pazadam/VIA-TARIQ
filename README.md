@@ -82,7 +82,7 @@ Raster representing conductivity values in the landscape with resolution of 70 m
 
 -   **south_dem_70.tif**
 
-Digital Elevation Model (DEM) used for creation of slope-based conductance surfaces in scenario 2. It is based on the 30 m resolution FABDEM (see above) that was resampled to 70 m resolution in order to limit computational demands. It was resampled using 'Bilinear Resampling' method in 'Resample' tool in ArcGIS Pro v3.
+Digital Elevation Model (DEM) used for creation of slope-based conductance surfaces in scenario 2. It is based on the 30 m resolution FABDEM, created following the same procedure and containing same conductivity values as the *levant_conductance_250.tif* (see above) that was resampled to 70 m resolution in order to limit computational demands. It was resampled using 'Bilinear Resampling' method in 'Resample' tool in ArcGIS Pro v3.
 
 -   **south_sites.shp**
 
