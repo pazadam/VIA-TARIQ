@@ -2,6 +2,16 @@
 
 **Analysing the long-term change and persistency of the Roman road system in the Levant**
 
+-   [Introduction] (https://github.com/pazadam/VIA-TARIQ#introduction)
+-   [Description] (https://github.com/pazadam/VIA-TARIQ#description)
+-   [Data] (https://github.com/pazadam/VIA-TARIQ#data)
+-   [Output] (https://github.com/pazadam/VIA-TARIQ#output)
+-   [Note on the usage] (https://github.com/pazadam/VIA-TARIQ#note-on-the-usage)
+-   [Dependencies] (https://github.com/pazadam/VIA-TARIQ#dependencies)
+-   [Bibliography] (https://github.com/pazadam/VIA-TARIQ#bibliography)
+
+### Introduction
+
 The code stored in this repository is used to undertake research objectives defined in Work Packages 1 and 2 of the VIA-TARIQ project.
 
 The principal research questions that are addressed by these WPs are:
@@ -10,17 +20,19 @@ The principal research questions that are addressed by these WPs are:
 
 2.  Can we use these variables to built a new highly-detailed predictive model of the Roman road network in the Levant?
 
-The code in this repository is addressing several aspects of this research through least-cost path and network modelling. While the first part of the research – identifying topographic constrains of the ancient roads – was done in GIS, its results are reused in this analysis. The further issues explored here are:
+The code in this repository is addressing several aspects of this research through least-cost path (LCP) and network modelling. While the first part of the research – identifying topographic constrains of the ancient roads – was done in GIS, its results are reused in this analysis. The further issues explored here are:
 
-1.  Since we identify topographic variables constraining the locations of ancient (Roman roads), it is possible to use these variable to model movement in the landscape. These variables are then used to identify 'natural corridors of movement' i.e., places in the landscapes where movement is naturally channeled to.
+1.  Since we identify topographic variables constraining the locations of ancient (Roman roads), it is possible to use these variable to model movement in the landscape. These variables are then used to model 'natural corridors of movement' i.e., places in the landscapes where movement is naturally channeled to. The variables considered are: 3 categories of slope, Topographic Position Index (TPI), and Vector Ruggedness Measure Local (VRML). The model is isotropic (direction independent) and so is called 'isotropic model' throughout the text.
 
 2.  Modeled 'natural corridors of movement' are then compared to the known network of Roman roads. In this step, an influence of topographic variables on location and shape of the Roman road network is evaluated. If the topographic variables are the main driving force influencing the shape of the Roman road network, then the Roman roads should be roughly co-terminous with the 'natural corridors of movement'. Any deviations then could be explained by other factors not considered (land use, distribution of water sources, settlement patterns, other cultural variables, etc.).
 
-3.  
+3.  The predictive isotropic model based on the topographic variables is compared to four selected slope-based cost functions which are often employed in archaeological studies. This is done in order to explore and evaluate the differences in modeled LCPs and how the isotropic model based on topographic variables, besides slope, performs compared to slope-based functions.
+
+4.  Finally, LCPs calculated between Roman sites using various cost functions (isotropic model and four slope-based functions) are compared to 60 selected Roman roads. The performance of the cost functions in predicting the course of Roman roads is evaluated and compared. In theory, the isotropic model, which is directly derived from topographic variables identified on ancient Roman roads should perform better than the rest.
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
-### What does this code do?
+### Description
 
 The code in ***main.R*** is titled "**Modelling natural corridors of movement in the Levant based on analysis of Roman road data**" and it presents two scenarios with several sub-scenarios:
 
@@ -101,6 +113,24 @@ A plot showing normalised PDI values comparing 60 selected Roman roads with the 
 ### **Note on the usage**
 
 Since source points in the scenario 1 are generated randomly in each simulation run, the resulting LCPs will differ every time the script is ran. The assumptions is that the number of calculated LCPs is high enough to reveal statistically more probable places that channel movement in the landscape (natural corridors of movement) with only minor deviations. The full evaluation and analysis of the material is provided in the article —-, and full dataset is published at Zenodo repository.
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+### Dependencies
+
+The code depends on following R packages:
+
+-   [sf](https://cran.r-project.org/web/packages/sf/index.html)
+
+-   [terra](https://cran.r-project.org/web/packages/terra/index.html)
+
+-   [leastcostpath](https://cran.r-project.org/web/packages/leastcostpath/index.html)
+
+-   [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html)
+
+-   [foreach](https://cran.r-project.org/web/packages/foreach/index.html)
+
+-   [ggplot2](https://cran.r-project.org/web/packages/ggplot2/index.html)
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
