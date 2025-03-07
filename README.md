@@ -2,13 +2,13 @@
 
 **Analysing the long-term change and persistency of the Roman road system in the Levant**
 
--   [Introduction] (https://github.com/pazadam/VIA-TARIQ#introduction)
--   [Description] (https://github.com/pazadam/VIA-TARIQ#description)
--   [Data] (https://github.com/pazadam/VIA-TARIQ#data)
--   [Output] (https://github.com/pazadam/VIA-TARIQ#output)
--   [Note on the usage] (https://github.com/pazadam/VIA-TARIQ#note-on-the-usage)
--   [Dependencies] (https://github.com/pazadam/VIA-TARIQ#dependencies)
--   [Bibliography] (https://github.com/pazadam/VIA-TARIQ#bibliography)
+-   [Introduction]
+-   [Description]
+-   [Data]
+-   [Output]
+-   [Note on the usage](https://github.com/pazadam/VIA-TARIQ#note-on-the-usage)
+-   [Dependencies]
+-   [Bibliography]
 
 ### Introduction
 
