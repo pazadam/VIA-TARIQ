@@ -4,11 +4,19 @@
 
 The code stored in this repository is used to undertake research objectives defined in Work Packages 1 and 2 of the VIA-TARIQ project.
 
-The principal research questions that are addressed by this research are:
+The principal research questions that are addressed by these WPs are:
 
 1.  Is it possible to identify main topographic variables that command location of ancient roads based on the analysis of high-resolution dataset of Roman roads?
 
 2.  Can we use these variables to built a new highly-detailed predictive model of the Roman road network in the Levant?
+
+The code in this repository is addressing several aspects of this research through least-cost path and network modelling. While the first part of the research – identifying topographic constrains of the ancient roads – was done in GIS, its results are reused in this analysis. The further issues explored here are:
+
+1.  Since we identify topographic variables constraining the locations of ancient (Roman roads), it is possible to use these variable to model movement in the landscape. These variables are then used to identify 'natural corridors of movement' i.e., places in the landscapes where movement is naturally channeled to.
+
+2.  Modeled 'natural corridors of movement' are then compared to the known network of Roman roads. In this step, an influence of topographic variables on location and shape of the Roman road network is evaluated. If the topographic variables are the main driving force influencing the shape of the Roman road network, then the Roman roads should be roughly co-terminous with the 'natural corridors of movement'. Any deviations then could be explained by other factors not considered (land use, distribution of water sources, settlement patterns, other cultural variables, etc.).
+
+3.  
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -18,11 +26,11 @@ The code in ***main.R*** is titled "**Modelling natural corridors of movement in
 
 1.  *Modelling natural corridors of movement*
 
-The first scenario focuses on modelling 'natural corridors of movement', i.e. areas where movement is more likely to occur based on a set of given criteria. Approach implemented here is an adaptation of the 'from everywhere to everywhere' (FETE) method (White and Barber 2012, Crabtree et al 2021). While in the original implementation all raster cells are considered as source points, here, due to limitations on computing power and time, only 100 random source points are generated in each simulation. With 50 simulations this results in 5,000 source points and 495,000 least-cost paths (LCPs) generated in the study region. This model uses a conductance surface representing topographic variables and their friction values (3 categories of slope, topographic position index - TPI, Vector Ruggedness Measure Local - VRML). The conductance surface (CS) is direction-independent, and therefore it is called 'isotropic' throughout the code. The LCPs are exported as shapefiles and further analysis is done in GIS to explore their relationship with known Roman roads.
+The first scenario focuses on modelling 'natural corridors of movement', i.e. areas where movement is more likely to occur based on a set of given criteria. Approach implemented here is an adaptation of the 'from everywhere to everywhere' (FETE) method (White and Barber 2012, Crabtree et al 2021). While in the original implementation all raster cells are considered as source points, here, due to limitations on computing power and time, only 100 random source points are generated in each simulation. With 50 simulations this results in 5,000 source points and 495,000 least-cost paths (LCPs) generated in the study region. This model uses a conductance surface representing topographic variables and their friction values (3 categories of slope, topographic position index - TPI, and Vector Ruggedness Measure Local - VRML). The conductance surface (CS) is direction-independent, and therefore it is called 'isotropic' throughout the code. The LCPs are exported as shapefiles and further analysis is done in GIS to explore their relationship with known Roman roads.
 
 2.  *Modelling FETE LCPs in the Southern Levant and comparing various cost functions*
 
-The second scenario focuses on Southern Levant, essentially asking question if the results of the first scenario can be improved when looking at smaller-scale and employing higher spatial resolution conductance surface (see *Data* below). In the first sub-scenario FETE LCPs are computed using the isotropic CS for a) regular grid of 110 points (spaced \~30 km apart), and b) 43 selected Roman sites. In the first instance it results in 11,990 LCPs, in the second in 1,806 LCPs. In the second sub-scenario FETE LCPs are computed for the same two sets of points using four different slope-based functions, two time-optimizing: Tobler (1993) and Naismith (1892), and two energy-optimizing: Herzog (2013) and Llobera-Sluckin (2007). In the next step, isotropic FETE LCPs computed for regular grid of points are compared to FETE LCPs obtained from slope-based functions, using normalised path deviation index (NPDI). This is done in order to evaluate performance of the isotropic model in comparison to the slope-based function. Finally, FETE LCPs calculated between selected Roman sites using all cost functions are compared with 60 selected Roman roads (2,808.8 km), using NPDI method to evaluate their performance in predicting location of Roman roads.
+The second scenario focuses on the southern Levant, essentially asking question if the results of the first scenario can be improved when looking at smaller-scale and employing higher spatial resolution conductance surface (see *Data* below). In the first sub-scenario FETE LCPs are computed using the isotropic CS for a) regular grid of 110 points (spaced \~30 km apart), and b) 43 selected Roman sites. In the first instance it results in 11,990 LCPs, in the second in 1,806 LCPs. In the second sub-scenario FETE LCPs are computed for the same two sets of points using four different slope-based functions, two time-optimizing: Tobler (1993) and Naismith (1892), and two energy-optimizing: Herzog (2013) and Llobera-Sluckin (2007). In the next step, isotropic FETE LCPs computed for regular grid of points are compared to FETE LCPs obtained from slope-based functions, using normalised path deviation index (NPDI). This is done in order to evaluate performance of the isotropic model in comparison to the slope-based function. Finally, FETE LCPs calculated between selected Roman sites using all cost functions are compared with 60 selected Roman roads (2,808.8 km), using NPDI method to evaluate their performance in predicting location of Roman roads.
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -100,7 +108,7 @@ Since source points in the scenario 1 are generated randomly in each simulation 
 
 Crabtree, S. et al. 2016. Landscape rules predict optimal superhighways for the first peopling of Sahul. *Nature Human Behaviour* 5, 1303-1313. DOI: [10.1038/s41562-021-01106-8](https://doi.org/10.1038/s41562-021-01106-8)
 
-Hanson, J.W. 2016. *Cities Database (OXREP database)*. Version 1.0. Accessed 1/12/2024: http://oxrep.classics.ox.ac.uk/databases/cities/. DOI: <https://doi.org/10.5287/bodleian:eqapevAn8>
+Hanson, J.W. 2016. *Cities Database (OXREP database)*. Version 1.0. Accessed 1/12/2024: <http://oxrep.classics.ox.ac.uk/databases/cities/>. DOI: <https://doi.org/10.5287/bodleian:eqapevAn8>
 
 Hawker, L. et al. 2022. A 30 m global map of elevation with forests and buildings removed. *Environmental Research Letters* 17. DOI: [10.1088/1748-9326/ac4d4f](https://doi.org/10.1088/1748-9326/ac4d4f)
 

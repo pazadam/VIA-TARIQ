@@ -48,7 +48,7 @@ cs_70 <- terra::rast("data/south_conductance_70.tif")
 source_points <- sf::st_read("data/south_source_points.shp")
 south_sites <- sf::st_read("data/south_sites.shp")
 
-##SCENARIO 2.1 MODELLING FETE LCPS USING ISOTROPIC CONDUCTANCE SURFACE
+##SCENARIO 2.1 MODELLING FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE
 
 #CREATE ISOTROPIC CONDUCTIVITY SURFACE
 cs <- leastcostpath::create_cs(x=cs_70, neighbours = 16, dem = NULL, max_slope = NULL)
@@ -72,7 +72,7 @@ slope_fete <- list()
 #CALCULATE FETE LCPS FOR EACH DEFINED SLOPE FUNCTION USING REGULAR GRID OF POINTS
 for (i in 1:length(cost_functions)) {
   print(paste0("i = ", i))
-  print("calculating conductivity surface")
+  print("calculating conductivity surface") #CALCULATES SLOPE-BASED CONDUCTIVITY SURFACE FOR GIVEN FUNCTION
   cs_slope <- leastcostpath::create_slope_cs(x = dem_70, cost_function = cost_functions[i], neighbours = 16)
   print("calculating fete")
   slope_fete[[i]] <- leastcostpath::create_FETE_lcps(x = cs_slope, locations = source_points, cost_distance = FALSE, ncores = 1)
@@ -86,7 +86,7 @@ slope_fete_roman <- list()
 #CALCULATE FETE LCPS FOR EACH DEFINED SLOPE FUNCTION USING ROMAN SITES
 for (i in 1:length(cost_functions)) {
   print(paste0("i = ", i))
-  print("calculating conductivity surface")
+  print("calculating conductivity surface") #CALCULATES SLOPE-BASED CONDUCTIVITY SURFACE FOR GIVEN FUNCTION
   cs_slope <- leastcostpath::create_slope_cs(x = dem_70, cost_function = cost_functions[i], neighbours = 16)
   print("calculating fete")
   slope_fete_roman[[i]] <- leastcostpath::create_FETE_lcps(x = cs_slope, locations = south_sites, cost_distance = FALSE, ncores = 1)
@@ -105,6 +105,7 @@ llobera_sluckin <- slope_fete[[4]]
 #TOBLER PDI VALIDATION
 tobler_PDIs <- list()
 
+#CREATE A LIST OF COMMONG ORIGIN AND DESTINATION IDS
 tobler_ids <- tobler %>%
   st_drop_geometry() %>%
   select(origin_ID, destination_ID) %>%
@@ -117,6 +118,7 @@ south_fete_ids <- south_fete %>%
 
 tobler_common <- inner_join(tobler_ids, south_fete_ids, by = c("origin_ID", "destination_ID"))
 
+#THIS CHUNK OF CODE FILTERS AND SUBSETS THE LCP DATASETS BY COMMON ORIGIN AND DESTINATION IDS AND COMPARES LCPS ONE BY ONE (PDI CALCULATION DOES NOT WORK OTHERWISE)
 for (i in 1:nrow(tobler_common)) {
   origin_ <- tobler_common$origin_ID[i]
   destination <- tobler_common$destination_ID[i]
@@ -139,7 +141,7 @@ sf::st_write(tobler_PDI_validation, "outputs/tobler_PDI_validation.shp")
 naismith_PDIs <- list()
 
 for (i in 1:nrow(south_fete_ids)) {
-  origin_ <- south_fete_ids$origin_ID[i]
+  origin_ <- south_fete_ids$origin_ID[i] #SINCE ORIGIN AND DESTINATION IDS ARE IN FACT THE SAME IN ALL DATASETS WE CAN WORK WITH ONLY ONE LIST OF IDS
   destination <- south_fete_ids$destination_ID[i]
   
   subset_naismith <- naismith %>%
