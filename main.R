@@ -35,30 +35,44 @@ for (i in 1:n_sims) {
   print(paste0("i = ", i))
   random_points[[i]] <- sf::st_as_sf(sf::st_sample(b_box, 100, type = "random"), crs = sf::st_crs(b_box))
   fete_random[[i]] <- leastcostpath::create_FETE_lcps(x = cs_250, locations = random_points[[i]])
-  sf::write_sf(fete_random[[i]], paste0("outputs/fete_random_", i, ".shp"))
-  sf::write_sf(random_points[[i]], paste0("outputs/random_points_", i, ".shp"))
+  sf::write_sf(fete_random[[i]], paste0("output/fete_random_", i, ".shp"))
+  sf::write_sf(random_points[[i]], paste0("output/random_points_", i, ".shp"))
 }
 
 ###SCENARIO 2: MODELLING FETE LCPS IN THE SOUTHERN LEVANT AND COMPARING VARIOUS COST FUNCTIONS
 
 ##IMPORT DATA
 dem_70 <- terra::rast("data/south_dem_70.tif")
-cs_70 <- terra::rast("data/south_conductance_70.tif")
+cs_75 <- terra::rast("data/south_conductance_75.tif")
 source_points <- sf::st_read("data/south_source_points.shp")
 south_sites <- sf::st_read("data/south_sites.shp")
 
 ##SCENARIO 2.1 MODELLING FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE
 
 #CREATE ISOTROPIC CONDUCTIVITY SURFACE
-cs <- leastcostpath::create_cs(x=cs_70, neighbours = 16, dem = NULL, max_slope = NULL)
+cs <- leastcostpath::create_cs(x=cs_75, neighbours = 16, dem = NULL, max_slope = NULL)
 
 #CALCULATE FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE FOR A REGULAR GRID OF POINTS
 south_fete <- leastcostpath::create_FETE_lcps(x=cs, locations = source_points, cost_distance = FALSE, ncores = 1)
-sf::st_write(south_fete, "outputs/south_fete.shp")
+sf::st_write(south_fete, "output/south_fete.shp")
 
 #CALCULATE FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE FOR SELECTED ROMAN SITES
 south_roman <- leastcostpath::create_FETE_lcps(x=cs, locations = south_sites, cost_distance = FALSE, ncores = 1)
-sf::st_write(south_roman, "outputs/south_roman.shp")
+sf::st_write(south_roman, "output/south_roman.shp")
+
+#CALCULATE FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE AND RANDOM POINTS
+#IN EACH RUN A SET OF 100 RANDOM POINTS WITHIN A BOUNDING BOX (EQUAL TO THE EXTENT OF THE UNDERLYING CONDUCTANCE SURFACE) ARE GENERATED
+#POINTS AND LCPS ARE THEN EXPORTED AS SHAPEFILES TO USE IN THE GIS FOR ADDITIONAL ANALYSES
+points_south75 <- list()
+fete_south75 <- list()
+
+for (i in 1:n_sims) {
+  print(paste0("i = ", i))
+  points_south75[[i]] <- sf::st_as_sf(sf::st_sample(b_box_south, 100, type = "random"), crs = sf::st_crs(b_box_south))
+  fete_south75[[i]] <- leastcostpath::create_FETE_lcps(x = cs_75, locations = points_south75[[i]])
+  sf::write_sf(fete_south75[[i]], paste0("output/fete_south75_", i, ".shp"))
+  sf::write_sf(points_south75[[i]], paste0("output/points_south75_", i, ".shp"))
+}
 
 ##SCENARIO 2.2 MODELLING FETE LCPS USING DIFFERENT COST FUNCTIONS
 
@@ -75,7 +89,7 @@ for (i in 1:length(cost_functions)) {
   cs_slope <- leastcostpath::create_slope_cs(x = dem_70, cost_function = cost_functions[i], neighbours = 16)
   print("calculating fete")
   slope_fete[[i]] <- leastcostpath::create_FETE_lcps(x = cs_slope, locations = source_points, cost_distance = FALSE, ncores = 1)
-  sf::write_sf(slope_fete[[i]], paste0("outputs/", cost_functions[i], ".shp"))
+  sf::write_sf(slope_fete[[i]], paste0("output/", cost_functions[i], ".shp"))
   
 }
 
@@ -89,7 +103,7 @@ for (i in 1:length(cost_functions)) {
   cs_slope <- leastcostpath::create_slope_cs(x = dem_70, cost_function = cost_functions[i], neighbours = 16)
   print("calculating fete")
   slope_fete_roman[[i]] <- leastcostpath::create_FETE_lcps(x = cs_slope, locations = south_sites, cost_distance = FALSE, ncores = 1)
-  sf::write_sf(slope_fete_roman[[i]], paste0("outputs/", cost_functions[i], "_roman", ".shp"))
+  sf::write_sf(slope_fete_roman[[i]], paste0("output/", cost_functions[i], "_roman", ".shp"))
   
 }
 
@@ -134,7 +148,7 @@ for (i in 1:nrow(tobler_common)) {
 }
 
 tobler_PDI_validation <- do.call(rbind, tobler_PDIs)
-sf::st_write(tobler_PDI_validation, "outputs/tobler_PDI_validation.shp")
+sf::st_write(tobler_PDI_validation, "output/tobler_PDI_validation.shp")
 
 #NAISMITH PDI VALIDATION
 naismith_PDIs <- list()
@@ -155,7 +169,7 @@ for (i in 1:nrow(south_fete_ids)) {
 }
 
 naismith_PDI_validation <- do.call(rbind, naismith_PDIs)
-sf::st_write(naismith_PDI_validation, "outputs/naismith_PDI_validation.shp")
+sf::st_write(naismith_PDI_validation, "output/naismith_PDI_validation.shp")
 
 #HERZOG PDI VALIDATION
 herzog_PDIs <- list()
@@ -176,7 +190,7 @@ for (i in 1:nrow(south_fete_ids)) {
 }
 
 herzog_PDI_validation <- do.call(rbind, herzog_PDIs)
-sf::st_write(herzog_PDI_validation, "outputs/herzog_PDI_validation.shp")
+sf::st_write(herzog_PDI_validation, "output/herzog_PDI_validation.shp")
 
 #LLOBERA-SLUCKIN PDI VALIDATION
 llobera_PDIs <- list()
@@ -197,7 +211,7 @@ for (i in 1:nrow(south_fete_ids)) {
 }
 
 llobera_PDI_validation <- do.call(rbind, llobera_PDIs)
-sf::st_write(llobera_PDI_validation, "outputs/llobera_PDI_validation.shp")
+sf::st_write(llobera_PDI_validation, "output/llobera_PDI_validation.shp")
 
 #COMPARE NORMALISED PDI VALUES
 tobler_rom_npdi <- tobler_PDI_validation %>%
@@ -236,7 +250,7 @@ ggplot(npdi_comparison_long, aes(x=Columns, y=Values, fill = Columns)) +
   theme(legend.position = "none", axis.text.x = element_text(), axis.title.x = element_blank())+
   scale_fill_brewer(palette = "Set1")
 
-##COMPARING ISOTROPIC AND SLOPE-BASED FETE LCPS (WITH ROMAN SITES AS SOURCE POINTS) TO SELECTED ROMAN ROADS
+##COMPARING ISOTROPIC AND SLOPE-BASED LCPS (WITH ROMAN SITES AS SOURCE POINTS) TO SELECTED ROMAN ROADS
 
 #IMPORT ROMAN ROADS
 roman_roads <- st_read("data/south_case_roads.shp")
@@ -292,7 +306,7 @@ for (i in 1:nrow(iso_common)) {
 }
 
 iso_roman_PDI_validation <- do.call(rbind, iso_roman_PDIs)
-sf::st_write(iso_roman_PDI_validation, "outputs/iso_roman_PDI_validation.shp")
+sf::st_write(iso_roman_PDI_validation, "output/iso_roman_PDI_validation.shp")
 
 #COMPARE TOBLER LCPS WITH ROMAN ROADS
 tobler_roman_PDIs <- list()
@@ -313,7 +327,7 @@ for (i in 1:nrow(iso_common)) {
 }
 
 tobler_roman_PDI_validation <- do.call(rbind, tobler_roman_PDIs)
-sf::st_write(tobler_roman_PDI_validation, "outputs/tobler_roman_PDI_validation.shp")
+sf::st_write(tobler_roman_PDI_validation, "output/tobler_roman_PDI_validation.shp")
 
 #COMPARE NAISMITH LCPS WITH ROMAN ROADS
 naismith_roman_PDIs <- list()
@@ -334,7 +348,7 @@ for (i in 1:nrow(iso_common)) {
 }
 
 naismith_roman_PDI_validation <- do.call(rbind, naismith_roman_PDIs)
-sf::st_write(naismith_roman_PDI_validation, "outputs/naismith_roman_PDI_validation.shp")
+sf::st_write(naismith_roman_PDI_validation, "output/naismith_roman_PDI_validation.shp")
 
 #COMPARE HERZOG LCPS WITH ROMAN ROADS
 herzog_roman_PDIs <- list()
@@ -355,7 +369,7 @@ for (i in 1:nrow(iso_common)) {
 }
 
 herzog_roman_PDI_validation <- do.call(rbind, herzog_roman_PDIs)
-sf::st_write(herzog_roman_PDI_validation, "outputs/herzog_roman_PDI_validation.shp")
+sf::st_write(herzog_roman_PDI_validation, "output/herzog_roman_PDI_validation.shp")
 
 #COMPARE LLOBERA-SLUCKIN LCPS WITH ROMAN ROADS
 llobera_roman_PDIs <- list()
@@ -376,7 +390,7 @@ for (i in 1:nrow(iso_common)) {
 }
 
 llobera_roman_PDI_validation <- do.call(rbind, llobera_roman_PDIs)
-sf::st_write(llobera_roman_PDI_validation, "outputs/llobera_roman_PDI_validation.shp")
+sf::st_write(llobera_roman_PDI_validation, "output/llobera_roman_PDI_validation.shp")
 
 #COMPARE NORMALISED PDI VALUES
 iso_rom_npdi <- iso_roman_PDI_validation %>%
