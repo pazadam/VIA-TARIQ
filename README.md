@@ -72,7 +72,7 @@ Raster representing conductivity values in the landscape with resolution of 250 
 
 -   **south_case_roads.shp**
 
-Layer of 60 selected Roman roads in the Southern Levant used for comparison with calculated LCPs in the scenario 2. THe roads are coming from the *Itiner-e* dataset (Brughmans et al 2024).
+Layer of 60 selected Roman roads in the Southern Levant used for comparison with calculated LCPs in the scenario 2. The roads are coming from the *Itiner-e* dataset (Brughmans et al 2024).
 
 -   **south_conductance_75.tif**
 
