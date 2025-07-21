@@ -12,7 +12,7 @@
 
 ### Introduction
 
-The code stored in this repository is used to undertake research objectives defined in Work Packages 1 and 2 of the VIA-TARIQ project.
+The code stored in this repository is used to undertake research objectives defined in Work Packages 1 and 2 of the VIA-TARIQ project, and accompanies article —-.
 
 The principal research questions that are addressed by these WPs are:
 
@@ -26,9 +26,7 @@ The code in this repository is addressing several aspects of this research throu
 
 2.  Modeled 'natural corridors of movement' are then compared to the known network of Roman roads. In this step, an influence of topographic variables on location and shape of the Roman road network is evaluated. If the topographic variables are the main driving force influencing the shape of the Roman road network, then the Roman roads should be roughly co-terminous with the 'natural corridors of movement'. Any deviations then could be explained by other factors not considered (land use, distribution of water sources, settlement patterns, other cultural variables, etc.).
 
-3.  The predictive isotropic model based on the topographic variables is compared to four selected slope-based cost functions which are often employed in archaeological studies. This is done in order to explore and evaluate the differences in modeled LCPs and how the isotropic model based on topographic variables, besides slope, performs compared to slope-based functions.
-
-4.  Finally, LCPs calculated between Roman sites using various cost functions (isotropic model and four slope-based functions) are compared to 60 selected Roman roads. The performance of the cost functions in predicting the course of Roman roads is evaluated and compared. In theory, the isotropic model, which is directly derived from topographic variables identified on ancient Roman roads should perform better than the rest.
+3.  Finally, LCPs calculated between Roman sites using various cost functions (isotropic model and four selected slope-based functions) are compared to 60 selected Roman roads. The performance of the cost functions in predicting the course of Roman roads is evaluated and compared. This is done in order to explore and evaluate the differences in modeled LCPs and how the isotropic model based on topographic variables, besides slope, performs compared to slope-based functions. In theory, the isotropic model, which is directly derived from topographic variables identified on ancient Roman roads should perform better than the rest.
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -42,7 +40,7 @@ The first scenario focuses on modelling 'natural corridors of movement', i.e. ar
 
 2.  *Modelling FETE LCPs in the Southern Levant and comparing various cost functions*
 
-The second scenario focuses on the southern Levant, essentially asking question if the results of the first scenario can be improved when looking at smaller-scale and employing higher spatial resolution conductance surface (see *Data* below). In the first sub-scenario FETE LCPs are computed using the isotropic CS for a) regular grid of 110 points (spaced \~30 km apart), and b) 43 selected Roman sites. In the first instance it results in 11,990 LCPs, in the second in 1,806 LCPs. In the second sub-scenario FETE LCPs are computed for the same two sets of points using four different slope-based functions, two time-optimizing: Tobler (1993) and Naismith (1892), and two energy-optimizing: Herzog (2013) and Llobera-Sluckin (2007). In the next step, isotropic FETE LCPs computed for regular grid of points are compared to FETE LCPs obtained from slope-based functions, using normalised path deviation index (NPDI). This is done in order to evaluate performance of the isotropic model in comparison to the slope-based function. Finally, FETE LCPs calculated between selected Roman sites using all cost functions are compared with 60 selected Roman roads (2,808.8 km), using NPDI method to evaluate their performance in predicting location of Roman roads.
+The second scenario focuses on the southern Levant, essentially asking question if the results of the first scenario can be improved when looking at smaller-scale and employing higher spatial resolution conductance surface (see *Data* below). In the first sub-scenario FETE LCPs are computed using the isotropic CS using the same methodology as in the first case (100 random points, 50 runs). The second sub-scenario evaluates the predictive power of the isotropic function and four different slope-based functions, two time-optimizing: Tobler (1993) and Naismith (1892), and two energy-optimizing: Herzog (2013) and Llobera-Sluckin (2007). LCPs are calculated between selected Roman sites using all cost functions and these are in turn compared with 60 selected Roman roads (2,808.8 km), using NPDI (normalized path deviation index) method.
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
@@ -76,9 +74,9 @@ Raster representing conductivity values in the landscape with resolution of 250 
 
 Layer of 60 selected Roman roads in the Southern Levant used for comparison with calculated LCPs in the scenario 2. THe roads are coming from the *Itiner-e* dataset (Brughmans et al 2024).
 
--   **south_conductance_70.tif**
+-   **south_conductance_75.tif**
 
-Raster representing conductivity values in the landscape with resolution of 70 m used in the scenario 2. It was created using same procedure as *levant_conductance_250.tif*, only it was resampled to 70 m resolution.
+Raster representing conductivity values in the landscape with resolution of 75 m used in the scenario 2. It was created using same procedure as *levant_conductance_250.tif*, only it was resampled to 75 m resolution.
 
 -   **south_dem_70.tif**
 
@@ -87,10 +85,6 @@ Digital Elevation Model (DEM) used for creation of slope-based conductance surfa
 -   **south_sites.shp**
 
 Layer of 43 selected Roman sites used for calculating LCPs in the scenario 2. The sites were selected according to several criteria: a) They represent accepted urban sites c. 200 CE (Hanson 2016), b) Mints according to *Roman Provincial Coinage* (<https://rpc.ashmus.ox.ac.uk>), c) other urban sites, road-stations, and forts added for areal coverage (Mampsis, Negla, Nessana, Neue, Oboda).
-
--   **south_source_points.shp**
-
-Layer of of source points used to calculate FETE LCPs in scenario 2. They are arranged in a regular orthogonal grid with a spacing of 30 km over continuouss landmass, except for large water bodies.
 
 All data is in projected coordinated system **EPSG:3395 (World Mercator)**.
 
@@ -112,7 +106,7 @@ A plot showing normalised PDI values comparing 60 selected Roman roads with the 
 
 ### **Note on the usage**
 
-Since source points in the scenario 1 are generated randomly in each simulation run, the resulting LCPs will differ every time the script is ran. The assumptions is that the number of calculated LCPs is high enough to reveal statistically more probable places that channel movement in the landscape (natural corridors of movement) with only minor deviations. The full evaluation and analysis of the material is provided in the article —-, and full dataset is published at Zenodo repository.
+Since source points in the scenario 1 are generated randomly in each simulation run, the resulting LCPs will differ every time the script is ran. The assumptions is that the number of calculated LCPs is high enough to reveal statistically more probable places that channel movement in the landscape (natural corridors of movement) with only minor deviations. The full evaluation and analysis of the material is provided in the article that refers to this repository, and full dataset is published at Zenodo repository.
 
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 

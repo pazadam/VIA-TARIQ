@@ -44,21 +44,12 @@ for (i in 1:n_sims) {
 ##IMPORT DATA
 dem_70 <- terra::rast("data/south_dem_70.tif")
 cs_75 <- terra::rast("data/south_conductance_75.tif")
-source_points <- sf::st_read("data/south_source_points.shp")
 south_sites <- sf::st_read("data/south_sites.shp")
 
 ##SCENARIO 2.1 MODELLING FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE
 
 #CREATE ISOTROPIC CONDUCTIVITY SURFACE
 cs <- leastcostpath::create_cs(x=cs_75, neighbours = 16, dem = NULL, max_slope = NULL)
-
-#CALCULATE FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE FOR A REGULAR GRID OF POINTS
-south_fete <- leastcostpath::create_FETE_lcps(x=cs, locations = source_points, cost_distance = FALSE, ncores = 1)
-sf::st_write(south_fete, "output/south_fete.shp")
-
-#CALCULATE FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE FOR SELECTED ROMAN SITES
-south_roman <- leastcostpath::create_FETE_lcps(x=cs, locations = south_sites, cost_distance = FALSE, ncores = 1)
-sf::st_write(south_roman, "output/south_roman.shp")
 
 #CALCULATE FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE AND RANDOM POINTS
 #IN EACH RUN A SET OF 100 RANDOM POINTS WITHIN A BOUNDING BOX (EQUAL TO THE EXTENT OF THE UNDERLYING CONDUCTANCE SURFACE) ARE GENERATED
@@ -69,12 +60,12 @@ fete_south75 <- list()
 for (i in 1:n_sims) {
   print(paste0("i = ", i))
   points_south75[[i]] <- sf::st_as_sf(sf::st_sample(b_box_south, 100, type = "random"), crs = sf::st_crs(b_box_south))
-  fete_south75[[i]] <- leastcostpath::create_FETE_lcps(x = cs_75, locations = points_south75[[i]])
+  fete_south75[[i]] <- leastcostpath::create_FETE_lcps(x = cs, locations = points_south75[[i]])
   sf::write_sf(fete_south75[[i]], paste0("output/fete_south75_", i, ".shp"))
   sf::write_sf(points_south75[[i]], paste0("output/points_south75_", i, ".shp"))
 }
 
-##SCENARIO 2.2 MODELLING FETE LCPS USING DIFFERENT COST FUNCTIONS
+#RESULTS NOT USED IN THE ARTICLE ##SCENARIO 2.2 MODELLING FETE LCPS USING DIFFERENT COST FUNCTIONS
 
 #DEFINE COST FUNCTIONS
 cost_functions <- c("tobler", "naismith", "herzog", "llobera-sluckin") #TOBLER AND NAISMITH FUNCTIONS ARE TIME-SAVING ALGORITHMS, HERZOG AND LLOBERA-SLUCKIN ARE ENERGY-SAVING FUNCTIONS
@@ -249,8 +240,9 @@ ggplot(npdi_comparison_long, aes(x=Columns, y=Values, fill = Columns)) +
   stat_summary(fun.y = mean, geom = "point", shape = 4, size=4, color="black")+
   theme(legend.position = "none", axis.text.x = element_text(), axis.title.x = element_blank())+
   scale_fill_brewer(palette = "Set1")
+#END OF RESULTS NOT USED IN THE ARTICLE
 
-##COMPARING ISOTROPIC AND SLOPE-BASED LCPS (WITH ROMAN SITES AS SOURCE POINTS) TO SELECTED ROMAN ROADS
+##SCENARIO 2.3 COMPARING ISOTROPIC AND SLOPE-BASED LCPS (WITH ROMAN SITES AS SOURCE POINTS) TO SELECTED ROMAN ROADS
 
 #IMPORT ROMAN ROADS
 roman_roads <- st_read("data/south_case_roads.shp")
