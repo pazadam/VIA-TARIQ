@@ -54,7 +54,7 @@ Bounding box for the generation of the random points in the scenario 1. It outli
 
 -   **levant_conductance_250.tif**
 
-Raster representing conductivity values in the landscape with resolution of 250 m. It is based on 30 m resolution slope (4 categories), TPI, and VRML rasters, which are in themselves based on the FABDEM (Hawker et al 2022, <font color="red">see Zenodo repository for the full dataset and description of the source raster layers)</font>. These raster layers were mosaiced into one with only the lowest value in given cell location retained. The original 30 m resolution conductivity raster was resampled to 250 m resolution using 'Majority' function in 'Resample' tool in ArcGIS Pro v3 (in order to limit computational demands). The values in the raster represent conductivity of different terrain types (low values represent low conductivity):
+Raster representing conductivity values in the landscape with resolution of 250 m. It is based on 30 m resolution slope (4 categories), TPI, and VRML rasters, which are in themselves based on the FABDEM (Hawker et al 2022, see Zenodo repository for the source raster layers <https://doi.org/10.5281/zenodo.16273367>). These raster layers were mosaiced into one with only the lowest value in given cell location retained. The original 30 m resolution conductivity raster was resampled to 250 m resolution using 'Majority' function in 'Resample' tool in ArcGIS Pro v3 (in order to limit computational demands). The values in the raster represent conductivity of different terrain types (low values represent low conductivity):
 
 |  |  |
 |----|----|
@@ -92,7 +92,7 @@ All data is in projected coordinated system **EPSG:3395 (World Mercator)**.
 
 ### Output
 
-Due to storage limitations, only two output files are included in the repository (folder ***output***), as the FETE LCPs have total size of several GB. For the full dataset see Zenodo repository.
+Due to storage limitations, only two output files are included in the repository (folder ***output***), as the FETE LCPs have total size of several GB. For more comprehensive dataset see Zenodo repository (<https://doi.org/10.5281/zenodo.16273367>).
 
 -   **n_pdi_comparison.tiff**
 
