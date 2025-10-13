@@ -45,6 +45,7 @@ for (i in 1:n_sims) {
 dem_70 <- terra::rast("data/south_dem_70.tif")
 cs_75 <- terra::rast("data/south_conductance_75.tif")
 south_sites <- sf::st_read("data/south_sites.shp")
+b_box_south <- sf::st_read("data/b_box_south.shp")
 
 ##SCENARIO 2.1 MODELLING FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE
 
