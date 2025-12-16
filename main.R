@@ -1,429 +1,136 @@
-############################################################################################
-#MODELLING NATURAL CORRIDORS OF MOVEMENT IN THE LEVANT BASED ON ANALYSIS OF ROMAN ROAD DATA#
-############################################################################################
+#########################################################################################################
+### MODELLING NATURAL CORRIDORS OF MOVEMENT IN THE SOUTHERN LEVANT BASED ON THE ANALYSIS OF ROAD DATA ###
+#########################################################################################################
 
-#LOAD LIBRARIES
+#### THE AIM OF THIS CODE IS TO MODEL NATURAL CORRIDORS OF MVOEMENT IN THE SOUTHERN LEVNAT USING ADAPTED 'FROM EVERYWHERE TO EVERYWHERE' (FETE) METHOD 
+#### IN THE FIRST SCENARIO, 2 ISOTROPIC CONDUCTANCE SURFACES USING TOPOGRPAHIC VARIABLES, CRITICAL SLOPE AND SLOPE CATEGORIES ARE USED
+#### in THE SECOND SCENARIO, FETE LCPS ARE MODELLED USING SLOPE-BASED ALGORITHMS (TOBLER, NAISMITH, HERYOG, LLOBERA-SLUCKIN)
+
+#Libraries
 library(sf)
 library(terra)
 library(leastcostpath)
 library(dplyr)
 library(foreach)
-library(tidyverse)
-library(ggplot2)
+library(tidyr)
 
-#SET UP NUMBER OF SIMULATIONS
+#Number of simulation runs
 n_sims <- 50
 
-###SCENARIO 1: MODELLING NATURAL CORRIDORS OF MOVEMENT USING FETE WITH RANDOM POINTS
+###Scenario 1.1 MODELLING FETE LCPS USING ISOTROPIC CONDUCTANCE SURFACE MORE SENSITIVE TO SLOPE AND TOPOGRAPHY (MODEL A)
 
 #IMPORT DATA
-cost <- terra::rast("data/levant_conductance_250.tif")
-b_box <- sf::st_read("data/b_box.shp")
-
-#CREATE ISOTROPIC CONDUCTANCE SURFACE
-cs_250 <- leastcostpath::create_cs(x = cost, neighbours = 16, dem = NULL, max_slope = NULL) #USING NEIGHBOURS=16 WHICH IS EQUAL TO KNIGHT'S MOVE
-
-# INITIALISE LISTS TO STORE FETE RESULTS
-fete_random <- list()
-random_points <- list()
-
-#MODELLING FETE LCPS USING ISOTROPIC CONDUCTANCE SURFACE
-#IN EACH RUN A SET OF 100 RANDOM POINTS WITHIN A BOUNDING BOX (EQUAL TO THE EXTENT OF THE UNDERLYING CONDUCTANCE SURFACE) ARE GENERATED
-#LCPS ARE THEN CALCULATED FROM ALL POINTS TO ALL OTHER POINTS (FETE=FROM EVERYWHERE TO EVERYWHERE)#
-#POINTS AND LCPS ARE THEN EXPORTED AS SHAPEFILES TO USE IN THE GIS FOR ADDITIONAL ANALYSES
-for (i in 1:n_sims) {
-  print(paste0("i = ", i))
-  random_points[[i]] <- sf::st_as_sf(sf::st_sample(b_box, 100, type = "random"), crs = sf::st_crs(b_box))
-  fete_random[[i]] <- leastcostpath::create_FETE_lcps(x = cs_250, locations = random_points[[i]])
-  sf::write_sf(fete_random[[i]], paste0("output/fete_random_", i, ".shp"))
-  sf::write_sf(random_points[[i]], paste0("output/random_points_", i, ".shp"))
-}
-
-###SCENARIO 2: MODELLING FETE LCPS IN THE SOUTHERN LEVANT AND COMPARING VARIOUS COST FUNCTIONS
-
-##IMPORT DATA
-dem_70 <- terra::rast("data/south_dem_70.tif")
-cs_75 <- terra::rast("data/south_conductance_75.tif")
-south_sites <- sf::st_read("data/south_sites.shp")
-b_box_south <- sf::st_read("data/b_box_south.shp")
-
-##SCENARIO 2.1 MODELLING FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE
+cs_75_sl10_t02 <- terra::rast("data/raster/south_conductance_75_sl10_t02.tif")
+b_box_south <- sf::st_read("data/vector/b_box_south.shp")
 
 #CREATE ISOTROPIC CONDUCTIVITY SURFACE
-cs <- leastcostpath::create_cs(x=cs_75, neighbours = 16, dem = NULL, max_slope = NULL)
+cs <- leastcostpath::create_cs(x=cs_75_sl10_t02, neighbours = 16, dem = NULL, max_slope = NULL)
 
 #CALCULATE FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE AND RANDOM POINTS
 #IN EACH RUN A SET OF 100 RANDOM POINTS WITHIN A BOUNDING BOX (EQUAL TO THE EXTENT OF THE UNDERLYING CONDUCTANCE SURFACE) ARE GENERATED
 #POINTS AND LCPS ARE THEN EXPORTED AS SHAPEFILES TO USE IN THE GIS FOR ADDITIONAL ANALYSES
-points_south75 <- list()
-fete_south75 <- list()
+
+#Create empty lists to store the results
+points_south75_sl10_t02 <- list()
+fete_south75_sl10_t02 <- list()
 
 for (i in 1:n_sims) {
   print(paste0("i = ", i))
-  points_south75[[i]] <- sf::st_as_sf(sf::st_sample(b_box_south, 100, type = "random"), crs = sf::st_crs(b_box_south))
-  fete_south75[[i]] <- leastcostpath::create_FETE_lcps(x = cs, locations = points_south75[[i]])
-  sf::write_sf(fete_south75[[i]], paste0("output/fete_south75_", i, ".shp"))
-  sf::write_sf(points_south75[[i]], paste0("output/points_south75_", i, ".shp"))
+  points_south75_sl10_t02[[i]] <- sf::st_as_sf(sf::st_sample(b_box_south, 100, type = "random"), crs = sf::st_crs(b_box_south))
+  fete_south75_sl10_t02[[i]] <- leastcostpath::create_FETE_lcps(x = cs, locations = points_south75_sl10_t02[[i]])
+  sf::write_sf(fete_south75_sl10_t02[[i]], paste0("outputs/fete_south75_sl10_t02_", i, ".shp"))
+  sf::write_sf(points_south75_sl10_t02[[i]], paste0("outputs/points_south75_sl10_t02_", i, ".shp"))
 }
 
-#RESULTS NOT USED IN THE ARTICLE ##SCENARIO 2.2 MODELLING FETE LCPS USING DIFFERENT COST FUNCTIONS
+###SCENARIO 1.2 MODELLING FETE LCPS USING ISOTROPIC CONDUCTANCE SURFACE LESS SENSITIVE TO SLOPE AND TOPOGRAPHY (MODEL B)
 
-#DEFINE COST FUNCTIONS
-cost_functions <- c("tobler", "naismith", "herzog", "llobera-sluckin") #TOBLER AND NAISMITH FUNCTIONS ARE TIME-SAVING ALGORITHMS, HERZOG AND LLOBERA-SLUCKIN ARE ENERGY-SAVING FUNCTIONS
+cs_75_sl20_t10 <- terra::rast("data/raster/south_conductance_75_sl20_t10.tif")
 
-#INITIALISE A LIST TO STORE RESULTING FETE LCPS FOR DEFINED COST FUNCTIONS
-slope_fete <- list()
+#Create isotropic conductance surface
+cs2 <- leastcostpath::create_cs(x=cs_75_sl20_t10, neighbours = 16, dem = NULL, max_slope = NULL)
 
-#CALCULATE FETE LCPS FOR EACH DEFINED SLOPE FUNCTION USING REGULAR GRID OF POINTS
-for (i in 1:length(cost_functions)) {
+#CALCULATE FETE LCPS USING ISOTROPIC CONDUCTIVITY SURFACE AND RANDOM POINTS
+#IN EACH RUN A SET OF 100 RANDOM POINTS WITHIN A BOUNDING BOX (EQUAL TO THE EXTENT OF THE UNDERLYING CONDUCTANCE SURFACE) ARE GENERATED
+#POINTS AND LCPS ARE THEN EXPORTED AS SHAPEFILES TO USE IN THE GIS FOR ADDITIONAL ANALYSES
+
+#Create empty lists to store the results
+points_south75_sl20_t10 <- list()
+fete_south75_sl20_t10 <- list()
+
+for (i in 1:n_sims) {
   print(paste0("i = ", i))
-  print("calculating conductivity surface") #CALCULATES SLOPE-BASED CONDUCTIVITY SURFACE FOR GIVEN FUNCTION
-  cs_slope <- leastcostpath::create_slope_cs(x = dem_70, cost_function = cost_functions[i], neighbours = 16)
-  print("calculating fete")
-  slope_fete[[i]] <- leastcostpath::create_FETE_lcps(x = cs_slope, locations = source_points, cost_distance = FALSE, ncores = 1)
-  sf::write_sf(slope_fete[[i]], paste0("output/", cost_functions[i], ".shp"))
-  
+  points_south75_sl20_t10[[i]] <- sf::st_as_sf(sf::st_sample(b_box_south, 100, type = "random"), crs = sf::st_crs(b_box_south))
+  fete_south75_sl20_t10[[i]] <- leastcostpath::create_FETE_lcps(x = cs2, locations = points_south75_sl20_t10[[i]])
+  sf::write_sf(fete_south75_sl20_t10[[i]], paste0("outputs/fete_south75_sl20_t10_", i, ".shp"))
+  sf::write_sf(points_south75_sl20_t10[[i]], paste0("outputs/points_south75_sl20_t10_", i, ".shp"))
 }
 
-#INITIALISE A LIST TO STORE RESULTING FETE LCPS FOR DEFINED COST FUNCTIONS
-slope_fete_roman <- list()
+####SCENARIO 2 MODELLING FETE LCPS USING SLOPE-BASED ALGORITHMS
 
-#CALCULATE FETE LCPS FOR EACH DEFINED SLOPE FUNCTION USING ROMAN SITES
-for (i in 1:length(cost_functions)) {
+##Number of simulations
+n_sims <- 10
+
+#Import DEM
+south_dem_75 <- terra::rast("data/raster/south_dem_75.tif")
+
+###TOBLER'S FUNCTION
+
+#Create lists to store the results
+points_tobler <- list()
+fete_tobler <- list()
+
+#Create CS
+cs_tobler <- leastcostpath::create_slope_cs(south_dem_75, cost_function = "tobler", neighbours = 16)
+
+for (i in 1:n_sims) {
   print(paste0("i = ", i))
-  print("calculating conductivity surface") #CALCULATES SLOPE-BASED CONDUCTIVITY SURFACE FOR GIVEN FUNCTION
-  cs_slope <- leastcostpath::create_slope_cs(x = dem_70, cost_function = cost_functions[i], neighbours = 16)
-  print("calculating fete")
-  slope_fete_roman[[i]] <- leastcostpath::create_FETE_lcps(x = cs_slope, locations = south_sites, cost_distance = FALSE, ncores = 1)
-  sf::write_sf(slope_fete_roman[[i]], paste0("output/", cost_functions[i], "_roman", ".shp"))
-  
+  points_tobler[[i]] <- sf::st_as_sf(sf::st_sample(b_box_south, 50, type = "random"), crs = sf::st_crs(b_box_south))
+  fete_tobler[[i]] <- leastcostpath::create_FETE_lcps(x = cs_tobler, locations = points_tobler[[i]])
+  sf::write_sf(fete_tobler[[i]], paste0("outputs/fete_tobler", i, ".shp"))
+  sf::write_sf(points_tobler[[i]], paste0("outputs/points_tobler", i, ".shp"))
 }
 
-##COMPARING FETE LCPS (ISOTROPIC MODEL WITH SLOPE-BASED COST FUNCTIONS), REGULAR GRID OF POINTS
+###NAIMSITH'S FUNCTION
+points_naismith <- list()
+fete_naismith <- list()
 
-#SEPARATE FETE LCPS ACCORDING TO THE SLOPE FUNCTION USED
-tobler <- slope_fete[[1]]
-naismith <- slope_fete[[2]]
-herzog <- slope_fete[[3]]
-llobera_sluckin <- slope_fete[[4]]
+#Create CS
+cs_naismith <- leastcostpath::create_slope_cs(south_dem_75, cost_function = "naismith", neighbours = 16)
 
-#TOBLER PDI VALIDATION
-tobler_PDIs <- list()
-
-#CREATE A LIST OF COMMONG ORIGIN AND DESTINATION IDS
-tobler_ids <- tobler %>%
-  st_drop_geometry() %>%
-  select(origin_ID, destination_ID) %>%
-  distinct()
-
-south_fete_ids <- south_fete %>%
-  st_drop_geometry() %>%
-  select(origin_ID, destination_ID) %>%
-  distinct()
-
-tobler_common <- inner_join(tobler_ids, south_fete_ids, by = c("origin_ID", "destination_ID"))
-
-#THIS CHUNK OF CODE FILTERS AND SUBSETS THE LCP DATASETS BY COMMON ORIGIN AND DESTINATION IDS AND COMPARES LCPS ONE BY ONE (PDI CALCULATION DOES NOT WORK OTHERWISE)
-for (i in 1:nrow(tobler_common)) {
-  origin_ <- tobler_common$origin_ID[i]
-  destination <- tobler_common$destination_ID[i]
-  
-  subset_tobler <- tobler %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  subset_south_fete <- south_fete %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  
-  tobler_pdi_results <- leastcostpath::PDI_validation(lcp = subset_tobler, comparison = subset_south_fete)
-  
-  tobler_PDIs[[paste(origin_, destination, sep = "_")]] <- tobler_pdi_results
-  
+for (i in 1:n_sims) {
+  print(paste0("i = ", i))
+  points_naismith[[i]] <- sf::st_as_sf(sf::st_sample(b_box_south, 50, type = "random"), crs = sf::st_crs(b_box_south))
+  fete_naismith[[i]] <- leastcostpath::create_FETE_lcps(x = cs_naismith, locations = points_naismith[[i]])
+  sf::write_sf(fete_naismith[[i]], paste0("outputs/fete_naismith", i, ".shp"))
+  sf::write_sf(points_naismith[[i]], paste0("outputs/points_naismith", i, ".shp"))
 }
 
-tobler_PDI_validation <- do.call(rbind, tobler_PDIs)
-sf::st_write(tobler_PDI_validation, "output/tobler_PDI_validation.shp")
+###HERZOG'S FUNCTION
+points_herzog <- list()
+fete_herzog <- list()
 
-#NAISMITH PDI VALIDATION
-naismith_PDIs <- list()
+#Create CS
+cs_herzog <- leastcostpath::create_slope_cs(south_dem_75, cost_function = "herzog", neighbours = 16)
 
-for (i in 1:nrow(south_fete_ids)) {
-  origin_ <- south_fete_ids$origin_ID[i] #SINCE ORIGIN AND DESTINATION IDS ARE IN FACT THE SAME IN ALL DATASETS WE CAN WORK WITH ONLY ONE LIST OF IDS
-  destination <- south_fete_ids$destination_ID[i]
-  
-  subset_naismith <- naismith %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  subset_south_fete <- south_fete %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  
-  naismith_pdi_results <- leastcostpath::PDI_validation(lcp = subset_naismith, comparison = subset_south_fete)
-  
-  naismith_PDIs[[paste(origin_, destination, sep = "_")]] <- naismith_pdi_results
-  
+for (i in 1:n_sims) {
+  print(paste0("i = ", i))
+  points_herzog[[i]] <- sf::st_as_sf(sf::st_sample(b_box_south, 50, type = "random"), crs = sf::st_crs(b_box_south))
+  fete_herzog[[i]] <- leastcostpath::create_FETE_lcps(x = cs_herzog, locations = points_herzog[[i]])
+  sf::write_sf(fete_herzog[[i]], paste0("outputs/fete_herzog", i, ".shp"))
+  sf::write_sf(points_herzog[[i]], paste0("outputs/points_herzog", i, ".shp"))
 }
 
-naismith_PDI_validation <- do.call(rbind, naismith_PDIs)
-sf::st_write(naismith_PDI_validation, "output/naismith_PDI_validation.shp")
+###LLOBERA-SLUCKIN'S FUNCTION
+points_llobera <- list()
+fete_llobera <- list()
 
-#HERZOG PDI VALIDATION
-herzog_PDIs <- list()
+#Create CS
+cs_llobera <- leastcostpath::create_slope_cs(south_dem_75, cost_function = "llobera-sluckin", neighbours = 16)
 
-for (i in 1:nrow(south_fete_ids)) {
-  origin_ <- south_fete_ids$origin_ID[i]
-  destination <- south_fete_ids$destination_ID[i]
-  
-  subset_herzog <- herzog %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  subset_south_fete <- south_fete %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  
-  herzog_pdi_results <- leastcostpath::PDI_validation(lcp = subset_herzog, comparison = subset_south_fete)
-  
-  herzog_PDIs[[paste(origin_, destination, sep = "_")]] <- herzog_pdi_results
-  
+for (i in 1:n_sims) {
+  print(paste0("i = ", i))
+  points_llobera[[i]] <- sf::st_as_sf(sf::st_sample(b_box_south, 50, type = "random"), crs = sf::st_crs(b_box_south))
+  fete_llobera[[i]] <- leastcostpath::create_FETE_lcps(x = cs_llobera, locations = points_llobera[[i]])
+  sf::write_sf(fete_llobera[[i]], paste0("outputs/fete_llobera", i, ".shp"))
+  sf::write_sf(points_llobera[[i]], paste0("outputs/points_llobera", i, ".shp"))
 }
-
-herzog_PDI_validation <- do.call(rbind, herzog_PDIs)
-sf::st_write(herzog_PDI_validation, "output/herzog_PDI_validation.shp")
-
-#LLOBERA-SLUCKIN PDI VALIDATION
-llobera_PDIs <- list()
-
-for (i in 1:nrow(south_fete_ids)) {
-  origin_ <- south_fete_ids$origin_ID[i]
-  destination <- south_fete_ids$destination_ID[i]
-  
-  subset_llobera <-llobera_sluckin %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  subset_south_fete <- south_fete %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  
-  llobera_pdi_results <- leastcostpath::PDI_validation(lcp = subset_llobera, comparison = subset_south_fete)
-  
-  llobera_PDIs[[paste(origin_, destination, sep = "_")]] <- llobera_pdi_results
-  
-}
-
-llobera_PDI_validation <- do.call(rbind, llobera_PDIs)
-sf::st_write(llobera_PDI_validation, "output/llobera_PDI_validation.shp")
-
-#COMPARE NORMALISED PDI VALUES
-tobler_rom_npdi <- tobler_PDI_validation %>%
-  st_drop_geometry() %>%
-  rename(n_pdi_tobler = normalised_pdi) %>%
-  select(n_pdi_tobler) %>%
-  distinct()
-
-naismith_npdi <- naismith_PDI_validation %>%
-  st_drop_geometry() %>%
-  rename(n_pdi_naismith = normalised_pdi) %>%
-  select(n_pdi_naismith) %>%
-  distinct()
-
-herzog_npdi <- herzog_PDI_validation %>%
-  st_drop_geometry() %>%
-  rename(n_pdi_herzog = normalised_pdi) %>%
-  select(n_pdi_herzog) %>%
-  distinct()
-
-llobera_npdi <- llobera_PDI_validation %>%
-  st_drop_geometry() %>%
-  rename(n_pdi_llobera = normalised_pdi) %>%
-  select(n_pdi_llobera) %>%
-  distinct()
-
-npdi_comparison <- cbind(tobler_npdi, naismith_npdi, herzog_npdi, llobera_npdi)
-
-npdi_comparison_long <- npdi_comparison %>%
-  pivot_longer(cols = everything(), names_to = "Columns", values_to = "Values")
-
-#PLOT THE RESULTS
-ggplot(npdi_comparison_long, aes(x=Columns, y=Values, fill = Columns)) +
-  geom_boxplot(alpha=0.7)+
-  stat_summary(fun.y = mean, geom = "point", shape = 4, size=4, color="black")+
-  theme(legend.position = "none", axis.text.x = element_text(), axis.title.x = element_blank())+
-  scale_fill_brewer(palette = "Set1")
-#END OF RESULTS NOT USED IN THE ARTICLE
-
-##SCENARIO 2.3 COMPARING ISOTROPIC AND SLOPE-BASED LCPS (WITH ROMAN SITES AS SOURCE POINTS) TO SELECTED ROMAN ROADS
-
-#IMPORT ROMAN ROADS
-roman_roads <- st_read("data/south_case_roads.shp")
-
-names(roman_roads)[names(roman_roads) == "origin"] <- "origin_ID"  #RENAME FIELDS TO origin_ID AND destination_ID SO THEY ARE IDENTICAL TO OTHER DATA FRAMES
-names(roman_roads)[names(roman_roads) == "destinatio"] <- "destination_ID"
-
-roman_roads <- st_zm(roman_roads, drop=TRUE, what = "ZM") #DROP Z DIMENSION AS ALL DATA FRAMES HAVE ONLY XY
-
-#SEPARATE SLOPE-BASED FETE LCPS 
-tobler_roman <- slope_fete_roman[[1]]
-naismith_roman <- slope_fete_roman[[2]]
-herzog_roman <- slope_fete_roman[[3]]
-llobera_sluckin_roman <- slope_fete_roman[[4]]
-
-#SET COMMON PROJECTED COORDINATE SYSTEM
-south_roman <- st_transform(south_roman, st_crs(roman_roads))
-tobler_roman <- st_transform(tobler_roman, st_crs(roman_roads))
-naismith_roman <- st_transform(naismith_roman, st_crs(roman_roads))
-herzog_roman <- st_transform(herzog_roman, st_crs(roman_roads))
-llobera_sluckin_roman <- st_transform(llobera_sluckin_roman, st_crs(roman_roads))
-
-#FIND AND SEPARATE SELECTED CONNECTIONS FROM THE ROMAN ROADS DATASET
-roman_roads_ids <- roman_roads %>%
-  st_drop_geometry() %>%
-  select(origin, destinatio) %>% 
-  rename(origin_ID = origin, destination_ID = destinatio) %>%
-  distinct()
-
-south_roman_ids <- south_roman %>%
-  st_drop_geometry() %>%
-  select(origin_ID, destination_ID) %>%
-  distinct()
-
-iso_common <- inner_join(south_roman_ids, roman_roads_ids, by = c("origin_ID", "destination_ID")) #DATA FRAME CONTAINING COMMON ORIGIN AND DESTINATION IDS
-
-#COMPARE ISOTROPIC MODEL LCPS WITH ROMAN ROADS
-iso_roman_PDIs <- list()
-
-for (i in 1:nrow(iso_common)) {
-  origin_ <- iso_common$origin_ID[i]
-  destination <- iso_common$destination_ID[i]
-  
-  subset_iso <- south_roman %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  subset_roman_roads <- roman_roads %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  
-  iso_roman_pdi_results <- leastcostpath::PDI_validation(lcp = subset_iso, comparison = subset_roman_roads)
-  
-  iso_roman_PDIs[[paste(origin_, destination, sep = "_")]] <- iso_roman_pdi_results
-  
-}
-
-iso_roman_PDI_validation <- do.call(rbind, iso_roman_PDIs)
-sf::st_write(iso_roman_PDI_validation, "output/iso_roman_PDI_validation.shp")
-
-#COMPARE TOBLER LCPS WITH ROMAN ROADS
-tobler_roman_PDIs <- list()
-
-for (i in 1:nrow(iso_common)) {
-  origin_ <- iso_common$origin_ID[i] #WE CAN USE ISO_COMMON BECAUSE THE ORIGIN AND DESTINATION IDS ARE THE SAME
-  destination <- iso_common$destination_ID[i]
-  
-  subset_tobler_rom <- tobler_roman %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  subset_roman_roads <- roman_roads %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  
-  tobler_roman_pdi_results <- leastcostpath::PDI_validation(lcp = subset_tobler_rom, comparison = subset_roman_roads)
-  
-  tobler_roman_PDIs[[paste(origin_, destination, sep = "_")]] <- tobler_roman_pdi_results
-  
-}
-
-tobler_roman_PDI_validation <- do.call(rbind, tobler_roman_PDIs)
-sf::st_write(tobler_roman_PDI_validation, "output/tobler_roman_PDI_validation.shp")
-
-#COMPARE NAISMITH LCPS WITH ROMAN ROADS
-naismith_roman_PDIs <- list()
-
-for (i in 1:nrow(iso_common)) {
-  origin_ <- iso_common$origin_ID[i]
-  destination <- iso_common$destination_ID[i]
-  
-  subset_naismith_rom <- naismith_roman %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  subset_roman_roads <- roman_roads %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  
-  naismith_roman_pdi_results <- leastcostpath::PDI_validation(lcp = subset_naismith_rom, comparison = subset_roman_roads)
-  
-  naismith_roman_PDIs[[paste(origin_, destination, sep = "_")]] <- naismith_roman_pdi_results
-  
-}
-
-naismith_roman_PDI_validation <- do.call(rbind, naismith_roman_PDIs)
-sf::st_write(naismith_roman_PDI_validation, "output/naismith_roman_PDI_validation.shp")
-
-#COMPARE HERZOG LCPS WITH ROMAN ROADS
-herzog_roman_PDIs <- list()
-
-for (i in 1:nrow(iso_common)) {
-  origin_ <- iso_common$origin_ID[i]
-  destination <- iso_common$destination_ID[i]
-  
-  subset_herzog_rom <- herzog_roman %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  subset_roman_roads <- roman_roads %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  
-  herzog_roman_pdi_results <- leastcostpath::PDI_validation(lcp = subset_herzog_rom, comparison = subset_roman_roads)
-  
-  herzog_roman_PDIs[[paste(origin_, destination, sep = "_")]] <- herzog_roman_pdi_results
-  
-}
-
-herzog_roman_PDI_validation <- do.call(rbind, herzog_roman_PDIs)
-sf::st_write(herzog_roman_PDI_validation, "output/herzog_roman_PDI_validation.shp")
-
-#COMPARE LLOBERA-SLUCKIN LCPS WITH ROMAN ROADS
-llobera_roman_PDIs <- list()
-
-for (i in 1:nrow(iso_common)) {
-  origin_ <- iso_common$origin_ID[i]
-  destination <- iso_common$destination_ID[i]
-  
-  subset_llobera_rom <- llobera_sluckin_roman %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  subset_roman_roads <- roman_roads %>%
-    filter(origin_ID == !!origin_ & destination_ID == !!destination)
-  
-  llobera_roman_pdi_results <- leastcostpath::PDI_validation(lcp = subset_llobera_rom, comparison = subset_roman_roads)
-  
-  llobera_roman_PDIs[[paste(origin_, destination, sep = "_")]] <- llobera_roman_pdi_results
-  
-}
-
-llobera_roman_PDI_validation <- do.call(rbind, llobera_roman_PDIs)
-sf::st_write(llobera_roman_PDI_validation, "output/llobera_roman_PDI_validation.shp")
-
-#COMPARE NORMALISED PDI VALUES
-iso_rom_npdi <- iso_roman_PDI_validation %>%
-  st_drop_geometry() %>%
-  rename(n_pdi_iso = normalised_pdi) %>%
-  select(n_pdi_iso) %>%
-  distinct()
-
-tobler_rom_npdi <- tobler_roman_PDI_validation %>%
-  st_drop_geometry() %>%
-  rename(n_pdi_tobler = normalised_pdi) %>%
-  select(n_pdi_tobler) %>%
-  distinct()
-
-naismith_rom_npdi <- naismith_roman_PDI_validation %>%
-  st_drop_geometry() %>%
-  rename(n_pdi_naismith = normalised_pdi) %>%
-  select(n_pdi_naismith) %>%
-  distinct()
-
-herzog_rom_npdi <- herzog_roman_PDI_validation %>%
-  st_drop_geometry() %>%
-  rename(n_pdi_herzog = normalised_pdi) %>%
-  select(n_pdi_herzog) %>%
-  distinct()
-
-llobera_rom_npdi <- llobera_roman_PDI_validation %>%
-  st_drop_geometry() %>%
-  rename(n_pdi_llobera = normalised_pdi) %>%
-  select(n_pdi_llobera) %>%
-  distinct()
-
-npdi_rom_comparison <- cbind(iso_rom_npdi, tobler_rom_npdi, naismith_rom_npdi, herzog_rom_npdi, llobera_rom_npdi)
-
-npdi_rom_comparison_long <- npdi_rom_comparison %>%
-  pivot_longer(cols = everything(), names_to = "Columns", values_to = "Values")
-
-#PLOT THE RESULTS
-ggplot(npdi_rom_comparison_long, aes(x=Columns, y=Values, fill = Columns)) +
-  geom_boxplot(alpha=0.7)+
-  stat_summary(fun.y = mean, geom = "point", shape = 4, size=4, color="black")+
-  theme(legend.position = "none", axis.text.x = element_text(), axis.title.x = element_blank())+
-  scale_fill_brewer(palette = "Set1")
