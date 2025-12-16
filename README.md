@@ -92,7 +92,7 @@ The folder is divide into several sub-folders:
 
 -   **south_conductance_75_sl10_t02.tif**
 
-Raster representing conductivity values in the landscape with resolution of 75 m. This is Model A - more sensitive to topography and slope categories. It is based on 30 m resolution slope (4 categories), TPI, and VRML rasters, which are in themselves based on the FABDEM (Hawker et al 2022, see Zenodo repository for the source raster layers <https://doi.org/10.5281/zenodo.16273367>). These raster layers were mosaiced into one with only the lowest value in given cell location retained. The original 30 m resolution conductivity raster was resampled to 75 m resolution using 'Majority' function in 'Resample' tool in ArcGIS Pro v3 (in order to limit computational demands). The values in the raster represent conductivity of different terrain types (low values represent low conductivity):
+Raster representing conductivity values in the landscape with resolution of 75 m. This is Model A - more sensitive to topography and slope categories. It is based on 30 m resolution slope (4 categories), TPI, and VRML rasters, which are in themselves based on the FABDEM (Hawker et al 2022, see Zenodo repository for the source raster layers [https://doi.org/](https://doi.org/10.5281/zenodo.16273367){.uri}[10.5281/zenodo.17953712](https://doi.org/10.5281/zenodo.17953712){.uri}). These raster layers were mosaiced into one with only the lowest value in given cell location retained. The original 30 m resolution conductivity raster was resampled to 75 m resolution using 'Majority' function in 'Resample' tool in ArcGIS Pro v3 (in order to limit computational demands). The values in the raster represent conductivity of different terrain types (low values represent low conductivity):
 
 |  |  |
 |----------------------------------------------|--------------------------|
@@ -135,7 +135,7 @@ All data is in projected coordinated system **EPSG:3395 (World Mercator)**.
 
 ### Outputs
 
-Due to storage limitations only results of the test assigning the conductivity values are included in the repository (folder ***outputs***), as the FETE LCPs have total size of several GB. For more comprehensive dataset see Zenodo repository (<https://doi.org/10.5281/zenodo.16273367>).
+Due to storage limitations only results of the test assigning the conductivity values are included in the repository (folder ***outputs***), as the FETE LCPs have total size of several GB. For more comprehensive overview of the outputs see Zenodo repository (<https://doi.org/10.5281/zenodo.17953712>).
 
 -   **LCP\_ .shp**
 
